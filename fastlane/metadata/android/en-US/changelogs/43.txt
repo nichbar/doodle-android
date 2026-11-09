@@ -1,0 +1,2 @@
+• New: Static wallpaper edition - apply designs directly without background service
+• New: Automated build and release pipeline with GitHub Actions

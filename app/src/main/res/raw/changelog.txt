@@ -1,3 +1,8 @@
+## 10.0.0
+
+- New: Static wallpaper edition - apply designs directly without background service
+- New: Automated build and release pipeline with GitHub Actions
+
 ## 6.0.1
 
 - New: Apply designs directly as static wallpapers without background service
