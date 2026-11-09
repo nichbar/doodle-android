@@ -112,6 +112,7 @@ public final class Constants {
 
     public static final String LAST_VERSION = "last_version";
     public static final String FEEDBACK_POP_UP_COUNT = "feedback_pop_up_count";
+    public static final String STATIC_WALLPAPER_APPLIED = "static_wallpaper_applied";
   }
 
   public static final class DEF {
@@ -152,6 +153,7 @@ public final class Constants {
     public static final String THEME = "";
     public static final int UI_MODE = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
     public static final String UI_CONTRAST = CONTRAST.STANDARD;
+    public static final boolean STATIC_WALLPAPER_APPLIED = false;
   }
 
   public static BaseWallpaper getWallpaper(String wallpaper) {

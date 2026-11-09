@@ -1,10 +1,19 @@
 <img src="assets/header.png" />
 
-# Doodle Android: Live Wallpapers
+# Doodle Android (Static Wallpaper Edition)
 
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)  [![Release](https://img.shields.io/github/v/release/patzly/doodle-android?label=Release)](https://github.com/patzly/doodle-android/releases)  [![APK Downloads](https://img.shields.io/github/downloads/patzly/doodle-android/total.svg?label=APK%20Downloads)](https://github.com/patzly/doodle-android/releases)
+> [!NOTE]
+> **Static Wallpaper Edition (Fork)**
+>
+> This fork converts Doodle from a Live Wallpaper app into a **pure Static Wallpaper app** while keeping the original UI completely intact.
+>
+> ### Key Differences from Upstream
+> - **Direct Static Wallpaper Application**: Tapping the "Set" button renders the selected vector design to a full-resolution bitmap and applies it directly to the Home and Lock screens via Android's `WallpaperManager`.
+> - **Zero Background Overhead**: The background `LiveWallpaperService` is disabled. No background processes, no battery drain, no memory footprint, and no sensor (gyroscope/accelerometer) polling.
+> - **Universal Device Compatibility**: Removed the strict `android.software.live_wallpaper` hardware requirement, allowing the app to run on Android Go editions, low-RAM hardware, and custom ROMs without live wallpaper support.
+> - **100% Preserved UI & Styling**: All design selections, light/dark variants, custom color palettes, and sizing controls remain fully functional.
 
-Doodle Android is an open-source Android app that provides colorful live wallpapers with auto dark mode and power-efficient animations.
+Doodle Android is an open-source Android app that provides colorful wallpapers based on Pixel and Chrome OS designs.
 
 The wallpapers are based on the original Doodle live wallpaper collection of the Google Pixel 4 and the leaked (but never officially released) Material You static wallpaper collection of the Pixel 6, extended with additional wallpapers from Chrome OS.  
 The app is not just a copy of the original wallpapers, it's a complete rewrite without the permanent animations to save battery and storage space. In addition, there are many customization options to match your preferences.

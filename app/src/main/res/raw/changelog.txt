@@ -1,6 +1,6 @@
 ## 6.0.1
 
-- New: Luri (Bakhtiari) translation
+- New: Apply designs directly as static wallpapers without background service
 - Fixed: text paragraph appearance
 
 ## 6.0.0

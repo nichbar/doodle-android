@@ -68,13 +68,13 @@ import xyz.zedler.patrick.doodle.behavior.SystemBarBehavior;
 import xyz.zedler.patrick.doodle.databinding.ActivityMainBinding;
 import xyz.zedler.patrick.doodle.fragment.BaseFragment;
 import xyz.zedler.patrick.doodle.fragment.dialog.ApplyBottomSheetDialogFragment;
-import xyz.zedler.patrick.doodle.service.LiveWallpaperService;
 import xyz.zedler.patrick.doodle.util.HapticUtil;
 import xyz.zedler.patrick.doodle.util.LocaleUtil;
 import xyz.zedler.patrick.doodle.util.PrefsUtil;
 import xyz.zedler.patrick.doodle.util.ResUtil;
 import xyz.zedler.patrick.doodle.util.UiUtil;
 import xyz.zedler.patrick.doodle.util.ViewUtil;
+import xyz.zedler.patrick.doodle.util.WallpaperUtil;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -167,10 +167,7 @@ public class MainActivity extends AppCompatActivity {
 
     SystemBarBehavior.applyBottomInset(binding.fabMain);
 
-    isServiceRunning = LiveWallpaperService.isMainEngineRunning();
-    if (isServiceRunning) {
-      binding.fabMain.setVisibility(View.INVISIBLE);
-    }
+    isServiceRunning = false;
 
     if (getIntent() != null) {
       if (getIntent().getBooleanExtra(EXTRA.SHOW_FORCE_STOP_REQUEST, false)) {
@@ -180,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
 
     ViewCompat.setOnApplyWindowInsetsListener(binding.getRoot(), (v, insets) -> {
       bottomInset = insets.getInsets(Type.systemBars()).bottom;
-      setFabVisibility(!isServiceRunning, false);
+      setFabVisibility(true, false);
       return insets;
     });
 
@@ -195,17 +192,17 @@ public class MainActivity extends AppCompatActivity {
         return;
       }
       performHapticClick();
-      try {
-        Intent intent = new Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER);
-        intent.putExtra(
-            WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT,
-            new ComponentName(getPackageName(), LiveWallpaperService.class.getCanonicalName())
-        );
-        intent.putExtra("SET_LOCKSCREEN_WALLPAPER", true);
-        wallpaperPickerLauncher.launch(intent);
-      } catch (ActivityNotFoundException e) {
-        showSnackbar(R.string.msg_preview_missing);
-      }
+      WallpaperUtil.applyStaticWallpaper(this, success -> {
+        if (binding == null) {
+          return;
+        }
+        if (success) {
+          performHapticHeavyClick();
+          showSnackbar(R.string.msg_wallpaper_applied);
+        } else {
+          showSnackbar(R.string.msg_wallpaper_error);
+        }
+      });
     });
 
     if (savedInstanceState == null && bundleInstanceState == null) {
@@ -267,11 +264,7 @@ public class MainActivity extends AppCompatActivity {
   }
 
   public void checkIfServiceIsRunning() {
-    boolean isServiceRunningNew = LiveWallpaperService.isMainEngineRunning();
-    if (isServiceRunning != isServiceRunningNew) {
-      isServiceRunning = isServiceRunningNew;
-      setFabVisibility(!isServiceRunning, true);
-    }
+    setFabVisibility(true, false);
   }
 
   public int getFabTopEdgeDistance() {
@@ -407,7 +400,7 @@ public class MainActivity extends AppCompatActivity {
   }
 
   public void showForceStopRequest() {
-    if (!LiveWallpaperService.isMainEngineRunning() || binding == null) {
+    if (binding == null) {
       return;
     }
     showSnackbar(

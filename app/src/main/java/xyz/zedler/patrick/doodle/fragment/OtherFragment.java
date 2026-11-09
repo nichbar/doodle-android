@@ -55,7 +55,6 @@ import xyz.zedler.patrick.doodle.activity.MainActivity;
 import xyz.zedler.patrick.doodle.behavior.ScrollBehavior;
 import xyz.zedler.patrick.doodle.behavior.SystemBarBehavior;
 import xyz.zedler.patrick.doodle.databinding.FragmentOtherBinding;
-import xyz.zedler.patrick.doodle.service.LiveWallpaperService;
 import xyz.zedler.patrick.doodle.util.DialogUtil;
 import xyz.zedler.patrick.doodle.util.LocaleUtil;
 import xyz.zedler.patrick.doodle.util.UiUtil;
@@ -226,7 +225,7 @@ public class OtherFragment extends BaseFragment
           activity.restartToApply(
               100,
               getInstanceState(),
-              LiveWallpaperService.isMainEngineRunning(),
+              false,
               true
           );
         });

@@ -77,10 +77,10 @@ import xyz.zedler.patrick.doodle.behavior.ScrollBehavior;
 import xyz.zedler.patrick.doodle.behavior.SystemBarBehavior;
 import xyz.zedler.patrick.doodle.databinding.FragmentAppearanceBinding;
 import xyz.zedler.patrick.doodle.drawable.SvgDrawable;
-import xyz.zedler.patrick.doodle.service.LiveWallpaperService;
 import xyz.zedler.patrick.doodle.util.ResUtil;
 import xyz.zedler.patrick.doodle.util.UiUtil;
 import xyz.zedler.patrick.doodle.util.ViewUtil;
+import xyz.zedler.patrick.doodle.util.WallpaperUtil;
 import xyz.zedler.patrick.doodle.view.SelectionCardView;
 import xyz.zedler.patrick.doodle.wallpaper.AnthonyWallpaper;
 import xyz.zedler.patrick.doodle.wallpaper.AutumnWallpaper;
@@ -153,67 +153,24 @@ public class AppearanceFragment extends BaseFragment
     binding.toolbarAppearance.setNavigationOnClickListener(getNavigationOnClickListener());
     binding.toolbarAppearance.setOnMenuItemClickListener(getOnMenuItemClickListener());
 
-    boolean isOneUiWithDynamicColors = activity.isOneUiWithDynamicColors();
-    binding.cardAppearanceOneUi.setVisibility(isOneUiWithDynamicColors ? View.VISIBLE : View.GONE);
+    binding.cardAppearanceOneUi.setVisibility(View.GONE);
 
     binding.buttonAppearanceSetStatic.setOnClickListener(v -> {
       if (getViewUtil().isClickDisabled(v.getId())) {
         return;
       }
-      WallpaperManager manager = WallpaperManager.getInstance(activity);
-      SharedPreferences sharedPrefs = getSharedPrefs();
-      BaseWallpaper wallpaper = Constants.getWallpaper(
-          sharedPrefs.getString(PREF.WALLPAPER, DEF.WALLPAPER)
-      );
-      int variantIndex = sharedPrefs.getInt(
-          Constants.VARIANT_PREFIX + wallpaper.getName(), 0
-      );
-      // This method is more efficient
-      if (variantIndex >= wallpaper.getVariants().length
-          || variantIndex >= wallpaper.getDarkVariants().length) {
-        variantIndex = 0;
-      }
-
-      WallpaperVariant variant;
-      SvgDrawable svgDrawable;
-      if (isWallpaperNightMode()) {
-        variant = wallpaper.getDarkVariants()[variantIndex];
-        svgDrawable = wallpaper.getPreparedSvg(
-            new SvgDrawable(activity, variant.getSvgResId()), variantIndex, true
-        );
-      } else {
-        variant = wallpaper.getVariants()[variantIndex];
-        svgDrawable = wallpaper.getPreparedSvg(
-            new SvgDrawable(activity, variant.getSvgResId()), variantIndex, false
-        );
-      }
-      if (svgDrawable == null) {
-        // Prevent NullPointerExceptions
-        svgDrawable = wallpaper.getPreparedSvg(
-            new SvgDrawable(activity, R.raw.wallpaper_pixel1), 1, false
-        );
-      }
-
-      float scale = getSharedPrefs().getFloat(
-          PREF.SCALE, SvgDrawable.getDefaultScale(getContext())
-      );
-      svgDrawable.setScale(scale);
-
-      Bitmap bitmap = Bitmap.createBitmap(
-          UiUtil.getDisplayWidth(activity),
-          UiUtil.getDisplayHeight(activity),
-          Bitmap.Config.ARGB_8888
-      );
-      Canvas canvas = new Canvas(bitmap);
-      svgDrawable.draw(canvas);
-      try {
-        manager.setBitmap(bitmap);
-        new Handler(Looper.getMainLooper()).postDelayed(
-            () -> activity.checkIfServiceIsRunning(), 300
-        );
-      } catch (IOException e) {
-        Log.e(TAG, "onViewCreated: ", e);
-      }
+      performHapticClick();
+      WallpaperUtil.applyStaticWallpaper(activity, success -> {
+        if (activity == null) {
+          return;
+        }
+        if (success) {
+          performHapticHeavyClick();
+          activity.showSnackbar(R.string.msg_wallpaper_applied);
+        } else {
+          activity.showSnackbar(R.string.msg_wallpaper_error);
+        }
+      });
     });
 
     int idNightMode;
@@ -308,21 +265,11 @@ public class AppearanceFragment extends BaseFragment
     }
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
-      if (isOneUiWithDynamicColors) {
-        binding.textAppearanceColorsDescription.setText(
-            R.string.appearance_colors_description_one_ui
-        );
-        binding.textAppearanceColorsDescription.setTextColor(
-            ResUtil.getColor(activity, R.attr.colorError)
-        );
-        binding.textAppearanceColorsDescription.setAlpha(1);
-      } else {
-        binding.textAppearanceColorsDescription.setText(
-            DynamicColors.isDynamicColorAvailable()
-                ? R.string.appearance_colors_description_dynamic
-                : R.string.appearance_colors_description
-        );
-      }
+      binding.textAppearanceColorsDescription.setText(
+          DynamicColors.isDynamicColorAvailable()
+              ? R.string.appearance_colors_description_dynamic
+              : R.string.appearance_colors_description
+      );
       setUpColorsContainer();
     } else {
       binding.linearAppearanceColors.setVisibility(View.GONE);
@@ -836,11 +783,9 @@ public class AppearanceFragment extends BaseFragment
   }
 
   private void showMonetInfoIfRequired() {
-    if (activity == null || binding == null || !DynamicColors.isDynamicColorAvailable()
-        || !LiveWallpaperService.isMainEngineRunning()) {
+    if (activity == null || binding == null || !DynamicColors.isDynamicColorAvailable()) {
       return;
     }
-    activity.showSnackbar(activity.getSnackbar(R.string.msg_apply_colors, Snackbar.LENGTH_LONG));
   }
 
   public String getColor(int priority, boolean custom) {

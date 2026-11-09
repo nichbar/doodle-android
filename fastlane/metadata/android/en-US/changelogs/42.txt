@@ -1,0 +1,2 @@
+• New: Static wallpaper edition - set designs directly without background service
+• New: Support for devices without live wallpaper capability

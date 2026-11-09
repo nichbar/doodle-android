@@ -243,6 +243,8 @@
   <string name="msg_preview_missing">An error occurred, please select Doodle Live Wallpaper manually</string>
   <string name="msg_report_crash">Please report any crash with the crash log attached so I can try to fix them.</string>
   <string name="msg_copied_to_clipboard">Copied to clipboard successfully</string>
+  <string name="msg_wallpaper_applied">Wallpaper applied</string>
+  <string name="msg_wallpaper_error">Failed to apply wallpaper</string>
 
   <!-- LICENSES -->
 
