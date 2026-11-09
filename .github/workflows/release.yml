@@ -23,6 +23,10 @@ jobs:
           distribution: temurin
           java-version: '17'
 
+      - name: Switch Gradle distributionUrl to Mirror
+        run: |
+          sed -i 's|https\\://services.gradle.org/distributions|https\\://mirrors.cloud.tencent.com/gradle|g' gradle/wrapper/gradle-wrapper.properties
+
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
