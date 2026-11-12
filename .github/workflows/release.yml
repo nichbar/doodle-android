@@ -63,12 +63,6 @@ jobs:
       - name: Rename APK
         run: cp app/build/outputs/apk/release/app-release.apk Doodle.${{ github.ref_name }}.apk
 
-      - name: Build Android App Bundle (release)
-        run: ./gradlew bundleRelease
-
-      - name: Rename AAB
-        run: cp app/build/outputs/bundle/release/app-release.aab Doodle.${{ github.ref_name }}.aab
-
       - name: Generate commit changelog
         run: |
           TAG="${{ github.ref_name }}"
@@ -93,7 +87,6 @@ jobs:
             echo "## Downloads"
             echo
             echo "- \`Doodle.${TAG}.apk\` — APK for Android"
-            echo "- \`Doodle.${TAG}.aab\` — Android App Bundle (Google Play)"
           } > release-notes.md
 
       - name: Create GitHub Release
@@ -104,4 +97,3 @@ jobs:
           generate_release_notes: false
           files: |
             Doodle.${{ github.ref_name }}.apk
-            Doodle.${{ github.ref_name }}.aab
