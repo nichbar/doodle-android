@@ -32,7 +32,7 @@
   <string name="app_translate" translatable="false">https://www.transifex.com/patzly/doodle-android/</string>
   <string name="app_privacy" translatable="false">https://patrickzedler.com/doodle/privacy-policy-doodle/</string>
 
-  <string name="wallpaper_description">Colorful live wallpaper with auto dark mode and power-efficient animations. Customize it to your needs!</string>
+  <string name="wallpaper_description">Colorful static wallpapers with auto dark mode. Customize it to your needs!</string>
   <string name="wallpaper_description_picker">Explore a colorful collection of shapes, refined with gentle parallax and zoom effects when you swipe through your home screens and unlock your device.\nCustomize the wallpaper to match your own style!</string>
 
   <!-- TITLES -->
@@ -152,7 +152,7 @@
   <!-- SIZE -->
 
   <string name="size_title">Shape size</string>
-  <string name="size_description">Scale &amp; zoom effect</string>
+  <string name="size_description">Scale options</string>
   <string name="size_category_zoom">Zoom effect</string>
   <string name="size_category_launcher">Launcher zoom</string>
   <string name="size_category_unlock">Lockscreen zoom</string>
@@ -177,7 +177,7 @@
   <!-- OTHER -->
 
   <string name="other_title">Other options</string>
-  <string name="other_description">Rendering, language &amp; reset</string>
+  <string name="other_description">Theme, language &amp; reset</string>
   <string name="other_language">Language</string>
   <string name="other_language_description">Many thanks to all the volunteer translators at Transifex! Please visit the project\'s GitHub page to learn how you can help make Doodle Live Wallpapers available for your language.</string>
   <string name="other_language_system">Follow system</string>
@@ -231,7 +231,7 @@
 
   <string name="msg_feedback">A great app requires a lot of time and lives from the feedback of its users.</string>
   <string name="msg_feedback_contact">Do you have any wishes, comments or questions? Feel free to contact me!\nOtherwise I would be very happy about a nice review in the Play Store.</string>
-  <string name="msg_share">Check out this cool live wallpaper app: \nhttps://play.google.com/store/apps/details?id=xyz.zedler.patrick.doodle</string>
+  <string name="msg_share">Check out this wallpaper app: \nhttps://play.google.com/store/apps/details?id=xyz.zedler.patrick.doodle</string>
   <string name="msg_hide">Hide icon in launcher?</string>
   <string name="msg_random">All selected designs will be used</string>
   <string name="msg_random_warning">Random wallpaper design is still active!</string>

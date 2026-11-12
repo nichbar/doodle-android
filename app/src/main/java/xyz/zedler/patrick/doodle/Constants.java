@@ -19,13 +19,7 @@
 
 package xyz.zedler.patrick.doodle;
 
-import android.app.AlarmManager;
-import android.util.Log;
 import androidx.appcompat.app.AppCompatDelegate;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Random;
-import java.util.Set;
 import xyz.zedler.patrick.doodle.wallpaper.AnthonyWallpaper;
 import xyz.zedler.patrick.doodle.wallpaper.AutumnWallpaper;
 import xyz.zedler.patrick.doodle.wallpaper.BaseWallpaper;
@@ -44,18 +38,7 @@ import xyz.zedler.patrick.doodle.wallpaper.WaterWallpaper;
 
 public final class Constants {
 
-  private static final String TAG = Constants.class.getSimpleName();
-
   public static final String VARIANT_PREFIX = "variant_";
-  public static final String COLOR_PREFIX = "color_";
-  // e.g. color_floral_0_0 (Floral, first variant, primary color)
-  // e.g. color_pixel_1_2_dark (Pixel, second variant, tertiary color, dark mode)
-
-  public static String getThemeColorPref(
-      String wallpaperName, int variant, int priority, boolean isNight
-  ) {
-    return COLOR_PREFIX + wallpaperName + "_" + variant + "_" + priority + (isNight ? "_dark" : "");
-  }
 
   public static final class PREF {
 
@@ -119,41 +102,10 @@ public final class Constants {
 
     public static final String WALLPAPER = Constants.WALLPAPER.PIXEL;
     public static final int NIGHT_MODE = Constants.NIGHT_MODE.AUTO;
-    public static final boolean USE_DARK_TEXT = true;
-    public static final boolean FORCE_LIGHT_TEXT = false;
-    public static final String RANDOM = Constants.RANDOM.OFF;
-    public static final Set<String> RANDOM_LIST = new HashSet<>(
-        Arrays.asList(Constants.getAllWallpapers())
-    );
-    public static final String DAILY_TIME = "3:00";
-    public static final long RANDOM_INTERVAL = AlarmManager.INTERVAL_HOUR;
-
-    public static final boolean SWIPE = true;
-    public static final int SWIPE_INTENSITY = 2;
-    public static final boolean POWER_SAVE_SWIPE = false;
-    public static final boolean TILT = false;
-    public static final int TILT_INTENSITY = 2;
-    public static final int TILT_REFRESH_RATE = 30000;
-    public static final int DAMPING_TILT = 8;
-    public static final int THRESHOLD = 5;
-    public static final boolean POWER_SAVE_TILT = true;
-
-    public static final int ZOOM = 3;
-    public static final int ZOOM_ROTATION = 40;
-    public static final boolean POWER_SAVE_ZOOM = false;
-    public static final boolean ZOOM_LAUNCHER = true;
-    public static final boolean USE_ZOOM_DAMPING = true;
-    public static final int DAMPING_ZOOM = 12;
-    public static final boolean ZOOM_UNLOCK = true;
-    public static final boolean ZOOM_UNLOCK_IN = true;
-    public static final int ZOOM_DURATION = 1200;
-
     public static final String LANGUAGE = null;
-    public static final boolean GPU = true;
     public static final String THEME = "";
     public static final int UI_MODE = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
     public static final String UI_CONTRAST = CONTRAST.STANDARD;
-    public static final boolean STATIC_WALLPAPER_APPLIED = false;
   }
 
   public static BaseWallpaper getWallpaper(String wallpaper) {
@@ -190,29 +142,6 @@ public final class Constants {
       default:
         return new PixelWallpaper();
     }
-  }
-
-  public static BaseWallpaper getRandomWallpaper(Set<String> selection, String previous) {
-    BaseWallpaper chosen;
-    if (selection.isEmpty()) {
-      chosen = getWallpaper(previous != null && !previous.isEmpty() ? previous : DEF.WALLPAPER);
-    } else {
-      String[] wallpapers = selection.toArray(new String[0]);
-      if (wallpapers.length == 1) {
-        chosen = getWallpaper(wallpapers[0]);
-      } else {
-        try {
-          Random randomizer = new Random();
-          do {
-            chosen = getWallpaper(wallpapers[randomizer.nextInt(wallpapers.length)]);
-          } while (chosen.getName().equals(previous));
-        } catch (IllegalArgumentException e) {
-          Log.e(TAG, "getRandomWallpaper: ", e);
-          chosen = getWallpaper(DEF.WALLPAPER);
-        }
-      }
-    }
-    return chosen;
   }
 
   public static String[] getAllWallpapers() {
@@ -263,51 +192,11 @@ public final class Constants {
     public static final int OFF = 0;
   }
 
-  public static final class RANDOM {
-
-    public static final String OFF = "off";
-    public static final String DAILY = "daily";
-    public static final String INTERVAL = "interval";
-    public static final String SCREEN_OFF = "screen_off";
-  }
-
-  public static final class PRIORITY {
-
-    public static final int PRIMARY = 0;
-    public static final int SECONDARY = 1;
-    public static final int TERTIARY = 2;
-  }
-
-  public static final class USER_PRESENCE {
-
-    public static final String LOCKED = "locked";
-    public static final String OFF = "off";
-    public static final String UNLOCKED = "unlocked";
-  }
-
-  public static final class REQUEST_SOURCE {
-
-    public static final String ZOOM_LAUNCHER = "zoom_launcher";
-    public static final String ZOOM_UNLOCK = "zoom_unlock";
-    public static final String TILT = "tilt";
-    public static final String SWIPE = "swipe";
-  }
-
-  public static final class ACTION {
-
-    public static final String THEME_AND_DESIGN_CHANGED = "action_theme_and_design_changed";
-    public static final String THEME_CHANGED = "action_theme_changed";
-    public static final String SETTINGS_CHANGED = "action_settings_changed";
-  }
-
   public static final class EXTRA {
 
     public static final String RUN_AS_SUPER_CLASS = "run_as_super_class";
     public static final String INSTANCE_STATE = "instance_state";
-    public static final String SHOW_FORCE_STOP_REQUEST = "show_force_stop_request";
     public static final String SCROLL_POSITION = "scroll_position";
-    public static final String SELECTION_INDEX = "selection_index";
-    public static final String COLOR = "color";
   }
 
   public static final class THEME {

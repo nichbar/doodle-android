@@ -91,7 +91,7 @@ android {
 
     lint {
         abortOnError false
-        disable 'MissingTranslation'
+        disable 'MissingTranslation', 'ExtraTranslation', 'ImpliedQuantity', 'UnusedResources'
     }
 
     bundle {

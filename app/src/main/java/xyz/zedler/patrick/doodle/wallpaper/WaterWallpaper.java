@@ -22,7 +22,6 @@ package xyz.zedler.patrick.doodle.wallpaper;
 import androidx.annotation.NonNull;
 import xyz.zedler.patrick.doodle.Constants.WALLPAPER;
 import xyz.zedler.patrick.doodle.R;
-import xyz.zedler.patrick.doodle.drawable.SvgDrawable;
 
 public class WaterWallpaper extends BaseWallpaper {
 
@@ -37,26 +36,11 @@ public class WaterWallpaper extends BaseWallpaper {
     return R.drawable.selection_water;
   }
 
-  @Override
-  public SvgDrawable getPreparedSvg(SvgDrawable svgDrawable, int variant, boolean isNightMode) {
-    svgDrawable.requireObjectById("dotted").isRotatable = true;
-    svgDrawable.requireObjectById("kidney").isRotatable = true;
-    return svgDrawable;
-  }
-
   @NonNull
   @Override
   public WallpaperVariant[] getVariants() {
     return new WallpaperVariant[]{
-        new WallpaperVariant(
-            R.raw.wallpaper_water,
-            "#e0e0df",
-            "#406382",
-            "#d0e3ef",
-            new String[]{"#8495a3", "#405967", "#87a2b0", "#6c8caa"},
-            true,
-            false
-        )
+        new WallpaperVariant(R.raw.wallpaper_water, "#e0e0df")
     };
   }
 
@@ -64,15 +48,7 @@ public class WaterWallpaper extends BaseWallpaper {
   @Override
   public WallpaperVariant[] getDarkVariants() {
     return new WallpaperVariant[]{
-        new WallpaperVariant(
-            R.raw.wallpaper_water_dark,
-            "#151718",
-            "#476988",
-            "#586a73",
-            new String[]{"#87a2b0", "#313232", "#323d43"},
-            false,
-            true
-        )
+        new WallpaperVariant(R.raw.wallpaper_water_dark, "#151718")
     };
   }
 }

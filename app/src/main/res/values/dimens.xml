@@ -21,6 +21,4 @@
 
   <dimen name="max_content_width">640dp</dimen>
 
-  <dimen name="color_picker_hsv_height">200dp</dimen>
-
 </resources>

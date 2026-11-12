@@ -35,10 +35,6 @@
       app:destination="@id/appearanceFragment" />
 
     <action
-      android:id="@+id/action_overview_to_parallax"
-      app:destination="@id/parallaxFragment" />
-
-    <action
       android:id="@+id/action_overview_to_size"
       app:destination="@id/sizeFragment" />
 
@@ -56,19 +52,7 @@
     android:id="@+id/appearanceFragment"
     android:name="xyz.zedler.patrick.doodle.fragment.AppearanceFragment"
     android:label="fragment_appearance"
-    tools:layout="@layout/fragment_appearance">
-
-    <action
-      android:id="@+id/action_appearance_to_colors_dialog"
-      app:destination="@id/colorsBottomSheetDialogFragment" />
-
-  </fragment>
-
-  <fragment
-    android:id="@+id/parallaxFragment"
-    android:name="xyz.zedler.patrick.doodle.fragment.ParallaxFragment"
-    android:label="fragment_parallax"
-    tools:layout="@layout/fragment_parallax" />
+    tools:layout="@layout/fragment_appearance" />
 
   <fragment
     android:id="@+id/sizeFragment"
@@ -138,46 +122,9 @@
     android:label="dialog_feedback" />
 
   <dialog
-    android:id="@+id/applyBottomSheetDialogFragment"
-    android:name="xyz.zedler.patrick.doodle.fragment.dialog.ApplyBottomSheetDialogFragment"
-    android:label="dialog_apply" />
-
-  <dialog
     android:id="@+id/languagesBottomSheetDialogFragment"
     android:name="xyz.zedler.patrick.doodle.fragment.dialog.LanguagesBottomSheetDialogFragment"
     android:label="dialog_languages" />
-
-  <dialog
-    android:id="@+id/colorsBottomSheetDialogFragment"
-    android:name="xyz.zedler.patrick.doodle.fragment.dialog.ColorsBottomSheetDialogFragment"
-    android:label="dialog_colors">
-
-    <argument
-      android:name="title"
-      app:argType="reference"
-      android:defaultValue="0" />
-
-    <argument
-      android:name="colors"
-      app:argType="string"
-      android:defaultValue="#000000" />
-
-    <argument
-      android:name="priority"
-      app:argType="integer"
-      android:defaultValue="0" />
-
-    <argument
-      android:name="themeColorPref"
-      app:argType="string"
-      android:defaultValue="" />
-
-    <argument
-      android:name="themeColorPrefDef"
-      app:argType="string"
-      android:defaultValue="#000000" />
-
-  </dialog>
 
   <action
     android:id="@+id/action_global_text_dialog"
@@ -186,9 +133,5 @@
   <action
     android:id="@+id/action_global_feedback_dialog"
     app:destination="@id/feedbackBottomSheetDialogFragment" />
-
-  <action
-    android:id="@+id/action_global_apply_dialog"
-    app:destination="@id/applyBottomSheetDialogFragment" />
 
 </navigation>

@@ -22,8 +22,6 @@ package xyz.zedler.patrick.doodle.wallpaper;
 import androidx.annotation.NonNull;
 import xyz.zedler.patrick.doodle.Constants.WALLPAPER;
 import xyz.zedler.patrick.doodle.R;
-import xyz.zedler.patrick.doodle.drawable.SvgDrawable;
-import xyz.zedler.patrick.doodle.drawable.SvgDrawable.SvgObject;
 
 public class AutumnWallpaper extends BaseWallpaper {
 
@@ -38,35 +36,11 @@ public class AutumnWallpaper extends BaseWallpaper {
     return R.drawable.selection_autumn;
   }
 
-  @Override
-  public SvgDrawable getPreparedSvg(SvgDrawable svgDrawable, int variant, boolean isNightMode) {
-    SvgObject leaf = svgDrawable.requireObjectById("leaf");
-    leaf.isRotatable = true;
-    leaf.pivotOffsetX = 300;
-    leaf.pivotOffsetY = 300;
-
-    SvgObject triangle = svgDrawable.requireObjectById("triangle");
-    triangle.isRotatable = true;
-    triangle.pivotOffsetX = -300;
-    triangle.pivotOffsetY = -300;
-
-    svgDrawable.requireObjectById("quad").isRotatable = true;
-    return svgDrawable;
-  }
-
   @NonNull
   @Override
   public WallpaperVariant[] getVariants() {
     return new WallpaperVariant[]{
-        new WallpaperVariant(
-            R.raw.wallpaper_autumn,
-            "#f3e7c8",
-            "#ead373",
-            "#b07029",
-            new String[]{"#d1ab7d", "#c69735"},
-            true,
-            false
-        )
+        new WallpaperVariant(R.raw.wallpaper_autumn, "#f3e7c8")
     };
   }
 
@@ -74,15 +48,7 @@ public class AutumnWallpaper extends BaseWallpaper {
   @Override
   public WallpaperVariant[] getDarkVariants() {
     return new WallpaperVariant[]{
-        new WallpaperVariant(
-            R.raw.wallpaper_autumn_dark,
-            "#151718",
-            "#ead373",
-            "#b07029",
-            new String[]{"#d1ab7d", "#c69735"},
-            false,
-            true
-        )
+        new WallpaperVariant(R.raw.wallpaper_autumn_dark, "#151718")
     };
   }
 }

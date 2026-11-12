@@ -22,7 +22,6 @@ package xyz.zedler.patrick.doodle.wallpaper;
 import androidx.annotation.NonNull;
 import xyz.zedler.patrick.doodle.Constants.WALLPAPER;
 import xyz.zedler.patrick.doodle.R;
-import xyz.zedler.patrick.doodle.drawable.SvgDrawable;
 
 public class OrioleWallpaper extends BaseWallpaper {
 
@@ -37,44 +36,13 @@ public class OrioleWallpaper extends BaseWallpaper {
     return R.drawable.selection_oriole;
   }
 
-  @Override
-  public SvgDrawable getPreparedSvg(SvgDrawable svgDrawable, int variant, boolean isNightMode) {
-    svgDrawable.requireObjectById("circle").isRotatable = true;
-    svgDrawable.requireObjectById("oval").isRotatable = true;
-    return svgDrawable;
-  }
-
   @NonNull
   @Override
   public WallpaperVariant[] getVariants() {
     return new WallpaperVariant[]{
-        new WallpaperVariant(
-            R.raw.wallpaper_oriole1,
-            "#ffad8d",
-            "#ffc7b2",
-            "#392d28",
-            new String[]{},
-            true,
-            false
-        ),
-        new WallpaperVariant(
-            R.raw.wallpaper_oriole2,
-            "#bdd0ff",
-            "#e3ecff",
-            "#2e2e2e",
-            new String[]{},
-            true,
-            false
-        ),
-        new WallpaperVariant(
-            R.raw.wallpaper_oriole3,
-            "#adff90",
-            "#d6ffb2",
-            "#1b1e1b",
-            new String[]{"#b3eaa0"},
-            true,
-            false
-        )
+        new WallpaperVariant(R.raw.wallpaper_oriole1, "#ffad8d"),
+        new WallpaperVariant(R.raw.wallpaper_oriole2, "#bdd0ff"),
+        new WallpaperVariant(R.raw.wallpaper_oriole3, "#adff90")
     };
   }
 
@@ -82,33 +50,9 @@ public class OrioleWallpaper extends BaseWallpaper {
   @Override
   public WallpaperVariant[] getDarkVariants() {
     return new WallpaperVariant[]{
-        new WallpaperVariant(
-            R.raw.wallpaper_oriole1_dark,
-            "#d88071",
-            "#ffad8d",
-            "#4a4a4a",
-            new String[]{},
-            false,
-            true
-        ),
-        new WallpaperVariant(
-            R.raw.wallpaper_oriole2_dark,
-            "#434380",
-            "#bdd0ff",
-            "#363c4a",
-            new String[]{},
-            false,
-            true
-        ),
-        new WallpaperVariant(
-            R.raw.wallpaper_oriole3_dark,
-            "#44885d",
-            "#adff90",
-            "#444a44",
-            new String[]{"#d6ffb2"},
-            false,
-            true
-        )
+        new WallpaperVariant(R.raw.wallpaper_oriole1_dark, "#d88071"),
+        new WallpaperVariant(R.raw.wallpaper_oriole2_dark, "#434380"),
+        new WallpaperVariant(R.raw.wallpaper_oriole3_dark, "#44885d")
     };
   }
 }

@@ -72,19 +72,6 @@ public class PrefsUtil {
       }
     }
 
-    // zoom is stored in a new way
-    if (sharedPrefs.contains(PREF.ZOOM)) {
-      int zoom = sharedPrefs.getInt(PREF.ZOOM, DEF.ZOOM);
-      if (zoom >= 2 && zoom <= 5) {
-        sharedPrefs.edit().putInt(PREF.ZOOM, zoom).apply();
-      } else {
-        removePreference(PREF.ZOOM);
-      }
-    }
-
-    // damping to damping_tilt
-    migrateInteger("damping", PREF.DAMPING_TILT, DEF.DAMPING_TILT);
-
     // variant is stored in a new way
 
     if (sharedPrefs.contains(PREF.VARIANT_PIXEL)) {
@@ -135,14 +122,36 @@ public class PrefsUtil {
       }
     }
 
-    // random mode is now stored as string with different modes
-    if (sharedPrefs.contains(PREF.RANDOM)) {
-      try {
-        sharedPrefs.getString(PREF.RANDOM, DEF.RANDOM);
-      } catch (ClassCastException e) {
-        removePreference(PREF.RANDOM);
-      }
-    }
+    // remove legacy dynamic wallpaper preferences
+    removePreference("damping");
+    removePreference(PREF.USE_DARK_TEXT);
+    removePreference(PREF.FORCE_LIGHT_TEXT);
+    removePreference(PREF.RANDOM);
+    removePreference(PREF.RANDOM_LIST);
+    removePreference(PREF.RANDOM_CURRENT);
+    removePreference(PREF.DAILY_TIME);
+    removePreference(PREF.RANDOM_INTERVAL);
+    removePreference(PREF.SWIPE);
+    removePreference(PREF.SWIPE_INTENSITY);
+    removePreference(PREF.POWER_SAVE_SWIPE);
+    removePreference(PREF.TILT);
+    removePreference(PREF.TILT_INTENSITY);
+    removePreference(PREF.TILT_REFRESH_RATE);
+    removePreference(PREF.DAMPING_TILT);
+    removePreference(PREF.THRESHOLD);
+    removePreference(PREF.POWER_SAVE_TILT);
+    removePreference(PREF.ZOOM);
+    removePreference(PREF.ZOOM_ROTATION);
+    removePreference(PREF.POWER_SAVE_ZOOM);
+    removePreference(PREF.ZOOM_LAUNCHER);
+    removePreference(PREF.USE_ZOOM_DAMPING);
+    removePreference(PREF.DAMPING_ZOOM);
+    removePreference(PREF.ZOOM_UNLOCK);
+    removePreference(PREF.ZOOM_UNLOCK_IN);
+    removePreference(PREF.ZOOM_DURATION);
+    removePreference(PREF.GPU);
+    removePreference(PREF.SCREEN_OFF_DELAY);
+    removePreference(PREF.STATIC_WALLPAPER_APPLIED);
 
     return this;
   }

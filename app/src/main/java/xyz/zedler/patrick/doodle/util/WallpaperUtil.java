@@ -114,7 +114,6 @@ public class WallpaperUtil {
         } else {
           manager.setBitmap(bitmap);
         }
-        sharedPrefs.edit().putBoolean(PREF.STATIC_WALLPAPER_APPLIED, true).apply();
         success = true;
       } catch (Throwable e) {
         Log.e(TAG, "applyStaticWallpaper: ", e);

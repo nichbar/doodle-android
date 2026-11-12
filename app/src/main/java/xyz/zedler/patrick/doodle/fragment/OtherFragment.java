@@ -19,20 +19,14 @@
 
 package xyz.zedler.patrick.doodle.fragment;
 
-import android.content.ComponentName;
-import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -41,16 +35,12 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.view.ContextThemeWrapper;
 import com.google.android.material.color.DynamicColors;
 import com.google.android.material.divider.MaterialDivider;
-import com.google.android.material.snackbar.BaseTransientBottomBar.BaseCallback;
-import com.google.android.material.snackbar.Snackbar;
-import com.google.android.material.snackbar.Snackbar.Callback;
 import xyz.zedler.patrick.doodle.Constants.CONTRAST;
 import xyz.zedler.patrick.doodle.Constants.DEF;
 import xyz.zedler.patrick.doodle.Constants.EXTRA;
 import xyz.zedler.patrick.doodle.Constants.PREF;
 import xyz.zedler.patrick.doodle.Constants.THEME;
 import xyz.zedler.patrick.doodle.R;
-import xyz.zedler.patrick.doodle.activity.LauncherActivity;
 import xyz.zedler.patrick.doodle.activity.MainActivity;
 import xyz.zedler.patrick.doodle.behavior.ScrollBehavior;
 import xyz.zedler.patrick.doodle.behavior.SystemBarBehavior;
@@ -61,10 +51,7 @@ import xyz.zedler.patrick.doodle.util.UiUtil;
 import xyz.zedler.patrick.doodle.util.ViewUtil;
 import xyz.zedler.patrick.doodle.view.SelectionCardView;
 
-public class OtherFragment extends BaseFragment
-    implements OnClickListener, OnCheckedChangeListener {
-
-  private static final String TAG = OtherFragment.class.getSimpleName();
+public class OtherFragment extends BaseFragment implements OnClickListener {
 
   private FragmentOtherBinding binding;
   private MainActivity activity;
@@ -136,7 +123,7 @@ public class OtherFragment extends BaseFragment
       getSharedPrefs().edit().putInt(PREF.UI_MODE, pref).apply();
       performHapticClick();
       activity.restartToApply(
-          0, getInstanceState(), false, true
+          0, getInstanceState(), true
       );
     });
 
@@ -169,7 +156,7 @@ public class OtherFragment extends BaseFragment
       performHapticClick();
       ViewUtil.startIcon(binding.imageSettingsContrast);
       activity.restartToApply(
-          0, getInstanceState(), false, true
+          0, getInstanceState(), true
       );
     });
     boolean enabled = !getSharedPrefs().getString(PREF.THEME, DEF.THEME).equals(THEME.DYNAMIC);
@@ -179,39 +166,6 @@ public class OtherFragment extends BaseFragment
         VERSION.SDK_INT >= VERSION_CODES.UPSIDE_DOWN_CAKE
             ? R.string.other_contrast_dynamic
             : R.string.other_contrast_dynamic_unsupported
-    );
-
-    boolean gpuOptionEnabled = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O;
-    ViewUtil.setEnabledAlpha(gpuOptionEnabled, false, binding.linearOtherGpu);
-    ViewUtil.setEnabled(gpuOptionEnabled, binding.switchOtherGpu);
-    binding.cardOtherGpu.setVisibility(gpuOptionEnabled ? View.GONE : View.VISIBLE);
-    if (gpuOptionEnabled) {
-      binding.linearOtherGpu.setOnClickListener(this);
-    }
-    binding.switchOtherGpu.setChecked(
-        gpuOptionEnabled && getSharedPrefs().getBoolean(PREF.GPU, DEF.GPU)
-    );
-    binding.switchOtherGpu.jumpDrawablesToCurrentState();
-
-    binding.switchOtherLauncher.setChecked(
-        activity.getPackageManager().getComponentEnabledSetting(
-            new ComponentName(activity, LauncherActivity.class)
-        ) == PackageManager.COMPONENT_ENABLED_STATE_DISABLED
-    );
-    binding.switchOtherLauncher.jumpDrawablesToCurrentState();
-
-    binding.sliderScreenOffDelay.setValue(
-        getSharedPrefs().getInt(PREF.SCREEN_OFF_DELAY, 0)
-    );
-    binding.sliderScreenOffDelay.addOnChangeListener((slider, value, fromUser) -> {
-      getSharedPrefs().edit().putInt(PREF.SCREEN_OFF_DELAY, (int) value).apply();
-      activity.requestSettingsRefresh();
-      performHapticClick();
-    });
-    binding.sliderScreenOffDelay.setLabelFormatter(
-        value -> getString(
-            R.string.label_ms, String.format(activity.getLocale(), "%.0f", value)
-        )
     );
 
     dialogUtilReset = new DialogUtil(activity, "reset");
@@ -225,7 +179,6 @@ public class OtherFragment extends BaseFragment
           activity.restartToApply(
               100,
               getInstanceState(),
-              false,
               true
           );
         });
@@ -234,15 +187,8 @@ public class OtherFragment extends BaseFragment
     ViewUtil.setOnClickListeners(
         this,
         binding.linearOtherLanguage,
-        binding.linearOtherLauncher,
         binding.linearOtherLog,
         binding.linearOtherReset
-    );
-
-    ViewUtil.setOnCheckedChangeListeners(
-        this,
-        binding.switchOtherGpu,
-        binding.switchOtherLauncher
     );
   }
 
@@ -261,74 +207,12 @@ public class OtherFragment extends BaseFragment
       performHapticClick();
       ViewUtil.startIcon(binding.imageOtherLanguage);
       navigate(OtherFragmentDirections.actionOtherToLanguagesDialog());
-    } else if (id == R.id.linear_other_gpu) {
-      binding.switchOtherGpu.toggle();
-    } else if (id == R.id.linear_other_launcher) {
-      binding.switchOtherLauncher.toggle();
     } else if (id == R.id.linear_other_log) {
       performHapticClick();
       navigateToFragment(OtherFragmentDirections.actionOtherToLog());
     } else if (id == R.id.linear_other_reset && getViewUtil().isClickEnabled(id)) {
       performHapticClick();
       dialogUtilReset.show();
-    }
-  }
-
-  @Override
-  public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-    int id = buttonView.getId();
-    performHapticClick();
-    if (id == R.id.switch_other_gpu) {
-      //ViewUtil.startIcon(binding.imageOtherGpu);
-      getSharedPrefs().edit().putBoolean(PREF.GPU, isChecked).apply();
-      activity.showForceStopRequest();
-    } else if (id == R.id.switch_other_launcher) {
-      ViewUtil.startIcon(binding.imageOtherLauncher);
-      if (isChecked) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-          activity.showSnackbar(R.string.other_launcher_unsupported);
-          binding.switchOtherLauncher.setOnCheckedChangeListener(null);
-          binding.switchOtherLauncher.setChecked(false);
-          binding.switchOtherLauncher.setOnCheckedChangeListener(this);
-        } else {
-          Snackbar snackbar = activity.getSnackbar(R.string.msg_hide, Snackbar.LENGTH_LONG);
-          snackbar.setAction(getString(R.string.action_hide), view -> {
-            performHapticHeavyClick();
-            activity.getPackageManager().setComponentEnabledSetting(
-                new ComponentName(activity, LauncherActivity.class),
-                PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-                PackageManager.DONT_KILL_APP
-            );
-          });
-          snackbar.addCallback(new Callback() {
-            @Override
-            public void onDismissed(Snackbar transientBottomBar, int event) {
-              if (binding == null || activity == null
-                  || event == BaseCallback.DISMISS_EVENT_CONSECUTIVE) {
-                return;
-              }
-              try {
-                binding.switchOtherLauncher.setOnCheckedChangeListener(null);
-                binding.switchOtherLauncher.setChecked(
-                    activity.getPackageManager().getComponentEnabledSetting(
-                        new ComponentName(activity, LauncherActivity.class)
-                    ) == PackageManager.COMPONENT_ENABLED_STATE_DISABLED
-                );
-                binding.switchOtherLauncher.setOnCheckedChangeListener(OtherFragment.this);
-              } catch (NullPointerException e) {
-                Log.e(TAG, "onDismissed: error when the snackbar was dismissed", e);
-              }
-            }
-          });
-          activity.showSnackbar(snackbar);
-        }
-      } else {
-        activity.getPackageManager().setComponentEnabledSetting(
-            new ComponentName(activity, LauncherActivity.class),
-            PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-            PackageManager.DONT_KILL_APP
-        );
-      }
     }
   }
 
@@ -392,7 +276,7 @@ public class OtherFragment extends BaseFragment
           card.setChecked(true);
           getSharedPrefs().edit().putString(PREF.THEME, name).apply();
           activity.restartToApply(
-              100, getInstanceState(), false, true
+              100, getInstanceState(), true
           );
         }
       });

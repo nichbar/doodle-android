@@ -79,24 +79,11 @@ public class OverviewFragment extends BaseFragment implements OnClickListener {
       itemHelp.setVisible(false);
     }
 
-    boolean shouldLogoBeVisible = activity.shouldLogoBeVisibleOnOverviewPage();
-
-    binding.frameOverviewClose.setVisibility(shouldLogoBeVisible ? View.GONE : View.VISIBLE);
-    binding.frameOverviewLogo.setVisibility(shouldLogoBeVisible ? View.VISIBLE : View.GONE);
-    if (activity.shouldLogoBeVisibleOnOverviewPage()) {
-      if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
-        binding.appBarOverview.setOnClickListener(v -> {
-          if (viewUtilLogo.isClickEnabled(v.getId())) {
-            ViewUtil.startIcon(binding.imageOverviewLogo);
-            performHapticClick();
-          }
-        });
-      }
-    } else {
-      binding.frameOverviewClose.setOnClickListener(v -> {
-        if (getViewUtil().isClickEnabled(v.getId())) {
+    if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
+      binding.appBarOverview.setOnClickListener(v -> {
+        if (viewUtilLogo.isClickEnabled(v.getId())) {
+          ViewUtil.startIcon(binding.imageOverviewLogo);
           performHapticClick();
-          activity.finish();
         }
       });
     }
@@ -106,7 +93,6 @@ public class OverviewFragment extends BaseFragment implements OnClickListener {
         binding.buttonOverviewInfo,
         binding.buttonOverviewHelp,
         binding.linearOverviewAppearance,
-        binding.linearOverviewParallax,
         binding.linearOverviewSize,
         binding.linearOverviewOther,
         binding.linearOverviewAbout
@@ -131,8 +117,6 @@ public class OverviewFragment extends BaseFragment implements OnClickListener {
 
     if (id == R.id.linear_overview_appearance) {
       navigateToFragment(OverviewFragmentDirections.actionOverviewToAppearance());
-    } else if (id == R.id.linear_overview_parallax) {
-      navigateToFragment(OverviewFragmentDirections.actionOverviewToParallax());
     } else if (id == R.id.linear_overview_size) {
       navigateToFragment(OverviewFragmentDirections.actionOverviewToSize());
     } else if (id == R.id.linear_overview_other) {

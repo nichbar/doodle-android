@@ -36,35 +36,11 @@
       android:layout_height="?attr/actionBarSize">
 
       <FrameLayout
-        android:id="@+id/frame_overview_close"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="4dp"
-        android:layout_marginEnd="20dp"
-        android:background="?attr/actionBarItemBackground"
-        android:clickable="true"
-        android:gravity="center"
-        android:layout_gravity="start|center_vertical"
-        android:contentDescription="@string/action_close"
-        android:tooltipText="@string/action_close"
-        android:focusable="true"
-        tools:targetApi="o">
-
-        <ImageView
-          android:id="@+id/image_overview_close"
-          style="@style/Widget.Doodle.ImageView.Icon.Navigation"
-          android:importantForAccessibility="no"
-          android:src="@drawable/ic_rounded_close" />
-
-      </FrameLayout>
-
-      <FrameLayout
         android:id="@+id/frame_overview_logo"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_marginStart="4dp"
         android:layout_marginEnd="20dp"
-        android:visibility="gone"
         android:gravity="center"
         android:layout_gravity="start|center_vertical">
 
@@ -187,30 +163,6 @@
             <TextView
               style="@style/Widget.Doodle.TextView.ListItem.Description"
               android:text="@string/appearance_description" />
-
-          </LinearLayout>
-
-        </LinearLayout>
-
-        <LinearLayout
-          android:id="@+id/linear_overview_parallax"
-          style="@style/Widget.Doodle.LinearLayout.ListItem.TwoLine.Clickable">
-
-          <ImageView
-            android:id="@+id/image_overview_parallax"
-            style="@style/Widget.Doodle.ImageView.ListItem.Icon"
-            android:src="@drawable/ic_rounded_swap_horiz_anim"
-            tools:ignore="ContentDescription" />
-
-          <LinearLayout style="@style/Widget.Doodle.LinearLayout.ListItem.TextBox.Stretch">
-
-            <TextView
-              style="@style/Widget.Doodle.TextView.ListItem.Title"
-              android:text="@string/parallax_title" />
-
-            <TextView
-              style="@style/Widget.Doodle.TextView.ListItem.Description"
-              android:text="@string/parallax_description" />
 
           </LinearLayout>
 

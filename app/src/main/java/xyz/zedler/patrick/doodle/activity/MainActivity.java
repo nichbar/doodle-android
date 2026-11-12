@@ -19,18 +19,9 @@
 
 package xyz.zedler.patrick.doodle.activity;
 
-import android.app.Activity;
-import android.app.WallpaperManager;
-import android.content.ActivityNotFoundException;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.PackageManager.NameNotFoundException;
-import android.content.pm.PackageManager.PackageInfoFlags;
-import android.content.pm.ResolveInfo;
 import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -42,8 +33,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.RawRes;
 import androidx.annotation.StringRes;
@@ -58,7 +47,6 @@ import androidx.navigation.fragment.NavHostFragment;
 import com.google.android.material.snackbar.Snackbar;
 import java.util.Locale;
 import xyz.zedler.patrick.doodle.BuildConfig;
-import xyz.zedler.patrick.doodle.Constants.ACTION;
 import xyz.zedler.patrick.doodle.Constants.DEF;
 import xyz.zedler.patrick.doodle.Constants.EXTRA;
 import xyz.zedler.patrick.doodle.Constants.PREF;
@@ -67,7 +55,6 @@ import xyz.zedler.patrick.doodle.R;
 import xyz.zedler.patrick.doodle.behavior.SystemBarBehavior;
 import xyz.zedler.patrick.doodle.databinding.ActivityMainBinding;
 import xyz.zedler.patrick.doodle.fragment.BaseFragment;
-import xyz.zedler.patrick.doodle.fragment.dialog.ApplyBottomSheetDialogFragment;
 import xyz.zedler.patrick.doodle.util.HapticUtil;
 import xyz.zedler.patrick.doodle.util.LocaleUtil;
 import xyz.zedler.patrick.doodle.util.PrefsUtil;
@@ -86,9 +73,7 @@ public class MainActivity extends AppCompatActivity {
   private SharedPreferences sharedPrefs;
   private ViewUtil viewUtil;
   private HapticUtil hapticUtil;
-  private ActivityResultLauncher<Intent> wallpaperPickerLauncher;
   private Locale locale;
-  private boolean isServiceRunning;
   private int fabTopEdgeDistance;
   private int bottomInset;
   private boolean runAsSuperClass;
@@ -145,13 +130,6 @@ public class MainActivity extends AppCompatActivity {
 
     locale = LocaleUtil.getLocale();
 
-    wallpaperPickerLauncher = registerForActivityResult(
-        new ActivityResultContracts.StartActivityForResult(),
-        result -> setFabVisibility(
-            result.getResultCode() != Activity.RESULT_OK, true
-        )
-    );
-
     // Calculate FAB top edge distance to bottom (excluding bottom inset)
     int height = UiUtil.dpToPx(this, 32) + UiUtil.spToPx(
         this, 16
@@ -166,14 +144,6 @@ public class MainActivity extends AppCompatActivity {
     navController = navHost.getNavController();
 
     SystemBarBehavior.applyBottomInset(binding.fabMain);
-
-    isServiceRunning = false;
-
-    if (getIntent() != null) {
-      if (getIntent().getBooleanExtra(EXTRA.SHOW_FORCE_STOP_REQUEST, false)) {
-        new Handler(Looper.getMainLooper()).postDelayed(this::showForceStopRequest, 200);
-      }
-    }
 
     ViewCompat.setOnApplyWindowInsetsListener(binding.getRoot(), (v, insets) -> {
       bottomInset = insets.getInsets(Type.systemBars()).bottom;
@@ -226,8 +196,6 @@ public class MainActivity extends AppCompatActivity {
       return;
     }
 
-    checkIfServiceIsRunning();
-
     hapticUtil.setEnabled(HapticUtil.areSystemHapticsTurnedOn(this));
   }
 
@@ -263,10 +231,6 @@ public class MainActivity extends AppCompatActivity {
     return (BaseFragment) navHost.getChildFragmentManager().getFragments().get(0);
   }
 
-  public void checkIfServiceIsRunning() {
-    setFabVisibility(true, false);
-  }
-
   public int getFabTopEdgeDistance() {
     return binding.fabMain.getTranslationY() == 0
         && binding.fabMain.getVisibility() == View.VISIBLE ? fabTopEdgeDistance : 0;
@@ -287,10 +251,6 @@ public class MainActivity extends AppCompatActivity {
     } else {
       binding.fabMain.setTranslationY(visible ? 0 : fabTopEdgeDistance + bottomInset);
     }
-  }
-
-  public boolean shouldLogoBeVisibleOnOverviewPage() {
-    return true;
   }
 
   public void showSnackbar(@StringRes int resId) {
@@ -333,45 +293,16 @@ public class MainActivity extends AppCompatActivity {
     return locale;
   }
 
-  public void requestSettingsRefresh() {
-    Intent intent = new Intent();
-    intent.setPackage(getPackageName());
-    intent.setAction(ACTION.SETTINGS_CHANGED);
-    sendBroadcast(intent);
-  }
-
-  public void requestThemeRefresh(boolean designMightHaveChanged) {
-    Intent intent = new Intent();
-    intent.setPackage(getPackageName());
-    intent.setAction(
-        designMightHaveChanged ? ACTION.THEME_AND_DESIGN_CHANGED : ACTION.THEME_CHANGED
-    );
-    sendBroadcast(intent);
-  }
-
   public void reset() {
     sharedPrefs.edit().clear().apply();
-    requestSettingsRefresh();
-    requestThemeRefresh(true);
-
-    boolean isLauncherIconDisabled = getPackageManager().getComponentEnabledSetting(
-        new ComponentName(this, LauncherActivity.class)
-    ) == PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
-    if (isLauncherIconDisabled) {
-      getPackageManager().setComponentEnabledSetting(
-          new ComponentName(this, LauncherActivity.class),
-          PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-          0
-      );
-    }
   }
 
   public void restartToApply(long delay) {
-    restartToApply(delay, new Bundle(), false, true);
+    restartToApply(delay, new Bundle(), true);
   }
 
   public void restartToApply(
-      long delay, @NonNull Bundle bundle, boolean showForceStopRequest, boolean restoreState
+      long delay, @NonNull Bundle bundle, boolean restoreState
   ) {
     new Handler(Looper.getMainLooper()).postDelayed(() -> {
       if (restoreState) {
@@ -384,9 +315,6 @@ public class MainActivity extends AppCompatActivity {
       if (restoreState) {
         intent.putExtra(EXTRA.INSTANCE_STATE, bundle);
       }
-      if (showForceStopRequest) {
-        intent.putExtra(EXTRA.SHOW_FORCE_STOP_REQUEST, true);
-      }
       startActivity(intent);
       if (VERSION.SDK_INT >= VERSION_CODES.S) {
         finish();
@@ -397,26 +325,6 @@ public class MainActivity extends AppCompatActivity {
         overridePendingTransition(0, 0);
       }
     }, delay);
-  }
-
-  public void showForceStopRequest() {
-    if (binding == null) {
-      return;
-    }
-    showSnackbar(
-        getSnackbar(
-            R.string.msg_force_stop, Snackbar.LENGTH_LONG
-        ).setAction(
-            getString(R.string.action_continue), view -> {
-              performHapticHeavyClick();
-              if (navController != null) {
-                navigate(NavMainDirections.actionGlobalApplyDialog());
-              } else {
-                ViewUtil.showBottomSheet(this, new ApplyBottomSheetDialogFragment());
-              }
-            }
-        )
-    );
   }
 
   private void showInitialBottomSheets() {
@@ -467,40 +375,6 @@ public class MainActivity extends AppCompatActivity {
     action.setFile(R.raw.changelog);
     action.setHighlights(new String[]{"New:", "Improved:", "Fixed:"});
     navigate(action);
-  }
-
-  public boolean isLauncherTouchWiz() {
-    Intent intent = new Intent("android.intent.action.MAIN");
-    intent.addCategory("android.intent.category.HOME");
-    PackageManager packageManager = getPackageManager();
-    ResolveInfo info = packageManager.resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY);
-    if (info != null) {
-      String launcher = info.activityInfo.packageName;
-      return launcher.equals("com.sec.android.app.launcher");
-    }
-    return false;
-  }
-
-  public boolean isOneUiWithDynamicColors() {
-    if (VERSION.SDK_INT < VERSION_CODES.S) {
-      return false;
-    } else {
-      final String PACKAGE_NAME = "com.sec.android.app.launcher";
-      PackageManager packageManager = getPackageManager();
-      PackageInfo info;
-      try {
-        if (VERSION.SDK_INT >= VERSION_CODES.TIRAMISU) {
-          info = packageManager.getPackageInfo(
-              PACKAGE_NAME, PackageInfoFlags.of(PackageManager.MATCH_SYSTEM_ONLY)
-          );
-        } else {
-          info = packageManager.getPackageInfo(PACKAGE_NAME, 0);
-        }
-        return info != null;
-      } catch (NameNotFoundException e) {
-        return false;
-      }
-    }
   }
 
   public void performHapticTick() {

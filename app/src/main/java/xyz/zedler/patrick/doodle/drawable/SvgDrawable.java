@@ -48,7 +48,6 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Random;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import xyz.zedler.patrick.doodle.parser.PathParser;
@@ -63,17 +62,13 @@ public class SvgDrawable {
 
   private final List<SvgObject> objects;
   private final List<String> ids;
-  private float offsetX;
-  private float offsetY;
   private float scale;
-  private float zoom;
   private final float pixelUnit;
   private float svgWidth, svgHeight;
   private final Paint paint, paintIntersection, paintDebug;
   private int backgroundColor;
   private final RectF rectF;
   private PointF pointF;
-  private final Random random;
   private final Path pathTransformed, pathIntersected;
   private final Matrix matrixCanvas;
   private final Matrix matrixPathTransformation;
@@ -95,7 +90,6 @@ public class SvgDrawable {
     paint = new Paint();
     paintIntersection = new Paint(Paint.ANTI_ALIAS_FLAG);
     rectF = new RectF();
-    random = new Random();
 
     pathTransformed = new Path();
     pathIntersected = new Path();
@@ -132,73 +126,8 @@ public class SvgDrawable {
     }
   }
 
-  /**
-   * The final offset is calculated with the elevation
-   */
-  public void setOffset(float offsetX, float offsetY) {
-    this.offsetX = offsetX;
-    this.offsetY = offsetY;
-  }
-
   public void setScale(float scale) {
     this.scale = scale;
-  }
-
-  /**
-   * Set how much should be zoomed out. The final value is calculated with the elevation of each
-   * object. An object with elevation of 1 (nearest) is zoomed out much more than an object with the
-   * elevation 0.1 (almost no parallax/zoom effect).
-   *
-   * @param zoom value from 0-1: 0 = original size; 1 = max zoomed out (depending on the elevation)
-   */
-  public void setZoom(float zoom) {
-    this.zoom = zoom;
-  }
-
-  /**
-   * Apply random elevation between 0 (no parallax/zoom) to 1 (maximal effects) to all objects
-   *
-   * @param min Set the minimal parallax/zoom intensity (good if nothing should be static)
-   */
-  public void applyRandomElevationToAll(float min) {
-    for (SvgObject object : objects) {
-      object.elevation = min + random.nextFloat() * (1 - min);
-    }
-  }
-
-  /**
-   * Apply elevation between 0 (no parallax/zoom) to 1 (maximal effects) to all objects in the
-   * original order
-   *
-   * @param min Set the minimal parallax/zoom intensity (good if nothing should be static)
-   */
-  public void applyRelativeElevationToAll(float min) {
-    float step = (1 - min) / objects.size();
-    for (int i = 0; i < objects.size(); i++) {
-      objects.get(i).elevation = Math.min(min + step * i, 1);
-    }
-  }
-
-  /**
-   * Apply random rotation to all objects, which is applied with the current zoom intensity
-   *
-   * @param min Set the minimal rotation in degrees (can be negative)
-   * @param max Set the maximal rotation in degrees
-   */
-  public void applyRandomZoomRotationToAll(int min, int max) {
-    for (SvgObject object : objects) {
-      if (object.isRotatable) {
-        if (DEBUG) {
-          object.zoomRotation = 260;
-        } else {
-          object.zoomRotation = min == 0 && max == 0
-              ? 0
-              : random.nextInt(max - min + 1) + min;
-        }
-      } else {
-        object.zoomRotation = 0;
-      }
-    }
   }
 
   public static float getDefaultScale(Context context) {
@@ -291,42 +220,15 @@ public class SvgDrawable {
   }
 
   private void drawObject(Canvas canvas, SvgObject object, SvgObject parentGroup) {
-    float zoomRotation = object.isRotatable ? object.zoomRotation * zoom : 0;
-    boolean hasPivotOffset = object.pivotOffsetX != 0 || object.pivotOffsetY != 0;
-    boolean canvasTransformed = !object.isInGroup && (object.rotation != 0 || zoomRotation != 0);
+    boolean canvasTransformed = !object.isInGroup && object.rotation != 0;
     if (canvasTransformed) {
       canvas.save();
-    }
-
-    if (!object.isInGroup && (object.rotation != 0 || zoomRotation != 0)) {
-      if (!hasPivotOffset) {
-        // Even for groups this rotation is required
-        canvas.rotate(
-            object.rotation + zoomRotation,
-            object.cx * canvas.getWidth(),
-            object.cy * canvas.getHeight()
-        );
-      } else {
-        if (object.rotation != 0) {
-          canvas.rotate(
-              object.rotation, object.cx * canvas.getWidth(), object.cy * canvas.getHeight()
-          );
-        }
-        if (zoomRotation != 0) {
-          if (DEBUG) { // draw pivot offset
-            canvas.drawPoint(
-                object.cx * canvas.getWidth() + object.pivotOffsetX * pixelUnit * scale,
-                object.cy * canvas.getHeight() + object.pivotOffsetY * pixelUnit * scale,
-                getDebugPaint(Color.YELLOW)
-            );
-          }
-          canvas.rotate(
-              zoomRotation,
-              object.cx * canvas.getWidth() + object.pivotOffsetX * pixelUnit * scale,
-              object.cy * canvas.getHeight() + object.pivotOffsetY * pixelUnit * scale
-          );
-        }
-      }
+      // Even for groups this rotation is required
+      canvas.rotate(
+          object.rotation,
+          object.cx * canvas.getWidth(),
+          object.cy * canvas.getHeight()
+      );
     }
     switch (object.type) {
       case SvgObject.TYPE_GROUP:
@@ -533,9 +435,8 @@ public class SvgDrawable {
     }
 
     if (object.isInGroup) {
-      float elevation = parentGroup.elevation;
-      float xCompensate = ((px + dx) - pointF.x) * (this.scale - 1) * (1 - zoom * elevation);
-      float yCompensate = ((py + dy) - pointF.y) * (this.scale - 1) * (1 - zoom * elevation);
+      float xCompensate = ((px + dx) - pointF.x) * (this.scale - 1);
+      float yCompensate = ((py + dy) - pointF.y) * (this.scale - 1);
       if (isPathIntersected) {
         matrixCanvas.postTranslate(dx + xCompensate, dy + yCompensate);
       } else {
@@ -557,19 +458,6 @@ public class SvgDrawable {
       matrixCanvas.postScale(scale, scale, px, py);
     } else {
       canvas.scale(scale, scale, px, py);
-    }
-
-    if (object.isInGroup) {
-      // fixes child path offset when zoomed out or in
-      // TODO: for scale 1.4-1.7 tiny offset still occurs, find a better fix
-      float elevation = parentGroup.elevation;
-      float xCompensate = ((px + dx) - pointF.x) * (1 - (this.scale - 1)) * (zoom * elevation);
-      float yCompensate = ((py + dy) - pointF.y) * (1 - (this.scale - 1)) * (zoom * elevation);
-      if (isPathIntersected) {
-        matrixCanvas.postTranslate(-xCompensate, -yCompensate);
-      } else {
-        canvas.translate(-xCompensate, -yCompensate);
-      }
     }
 
     if (isPathIntersected) {
@@ -1043,10 +931,6 @@ public class SvgDrawable {
     public String id;
     public final String type;
     public boolean isInGroup;
-    public float elevation;
-    public int zoomRotation;
-    public boolean isRotatable;
-    public float pivotOffsetX, pivotOffsetY;
 
     // GROUP
     public List<SvgObject> children;
@@ -1179,41 +1063,11 @@ public class SvgDrawable {
       cx = object.cx * canvas.getWidth() + object.translationX * canvas.getWidth();
       cy = object.cy * canvas.getHeight() + object.translationY * canvas.getHeight();
     }
-
-    float cxShifted = cx - (offsetX * object.elevation);
-    float cyShifted = cy - (offsetY * object.elevation);
-
-    // We need to compensate the object rotation, else the object would shift in that direction
-    // This is caused by the canvas rotation, but that's how objects can be rotated
-    PointF compensated = getRotatedPoint(cxShifted, cyShifted, cx, cy, -object.rotation);
-    cx = compensated.x;
-    cy = compensated.y;
-
-    float centerX = canvas.getWidth() / 2f;
-    if (cx < centerX) {
-      float dist = centerX - cx;
-      cx += dist * object.elevation * zoom;
-    } else {
-      float dist = cx - centerX;
-      cx -= dist * object.elevation * zoom;
-    }
-
-    float centerY = canvas.getHeight() / 2f;
-    if (cy < centerY) {
-      float dist = centerY - cy;
-      cy += dist * object.elevation * zoom;
-    } else {
-      float dist = cy - centerY;
-      cy -= dist * object.elevation * zoom;
-    }
     return new PointF(cx, cy);
   }
 
   private float getFinalScale(SvgObject object, SvgObject parentGroup) {
-    float objectScale = zoom >= 0
-        ? scale - (zoom * object.elevation)
-        : scale + (Math.abs(zoom) * object.elevation);
-    return object.isInGroup ? parentGroup.childScale : objectScale;
+    return object.isInGroup ? parentGroup.childScale : scale;
   }
 
   private Paint getDebugPaint(@ColorInt int color) {

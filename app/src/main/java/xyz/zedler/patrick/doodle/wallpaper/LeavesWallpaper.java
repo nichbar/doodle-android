@@ -39,11 +39,6 @@ public class LeavesWallpaper extends BaseWallpaper {
   }
 
   @Override
-  public boolean isDepthStatic() {
-    return false;
-  }
-
-  @Override
   public SvgDrawable getPreparedSvg(SvgDrawable svgDrawable, int variant, boolean isNightMode) {
     SvgObject blue = svgDrawable.requireObjectById("blue");
     blue.willBeIntersected = true;
@@ -63,15 +58,7 @@ public class LeavesWallpaper extends BaseWallpaper {
   @Override
   public WallpaperVariant[] getVariants() {
     return new WallpaperVariant[]{
-        new WallpaperVariant(
-            R.raw.wallpaper_leaves,
-            "#eac880",
-            "#6f8fae",
-            "#f48e77",
-            new String[]{"#f3e3cc", "#f0a775", "#f6bdac", "#2f366c"},
-            true,
-            false
-        )
+        new WallpaperVariant(R.raw.wallpaper_leaves, "#eac880")
     };
   }
 
@@ -79,15 +66,7 @@ public class LeavesWallpaper extends BaseWallpaper {
   @Override
   public WallpaperVariant[] getDarkVariants() {
     return new WallpaperVariant[]{
-        new WallpaperVariant(
-            R.raw.wallpaper_leaves_dark,
-            "#bf9951",
-            "#3e74a7",
-            "#bb6551",
-            new String[]{"#272628", "#c58457", "#a18078", "#353a6c"},
-            false,
-            true
-        )
+        new WallpaperVariant(R.raw.wallpaper_leaves_dark, "#bf9951")
     };
   }
 }

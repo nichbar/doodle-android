@@ -22,7 +22,6 @@ package xyz.zedler.patrick.doodle.wallpaper;
 import androidx.annotation.NonNull;
 import xyz.zedler.patrick.doodle.Constants.WALLPAPER;
 import xyz.zedler.patrick.doodle.R;
-import xyz.zedler.patrick.doodle.drawable.SvgDrawable;
 
 public class JohannaWallpaper extends BaseWallpaper {
 
@@ -37,25 +36,11 @@ public class JohannaWallpaper extends BaseWallpaper {
     return R.drawable.selection_johanna;
   }
 
-  @Override
-  public SvgDrawable getPreparedSvg(SvgDrawable svgDrawable, int variant, boolean isNightMode) {
-    svgDrawable.requireObjectById("green").isRotatable = true;
-    return svgDrawable;
-  }
-
   @NonNull
   @Override
   public WallpaperVariant[] getVariants() {
     return new WallpaperVariant[]{
-        new WallpaperVariant(
-            R.raw.wallpaper_johanna1,
-            "#fcf4e9",
-            "#f8bfa6",
-            "#d8e2eb",
-            new String[]{"#a15534", "#87a06d", "#e4c874"},
-            true,
-            false
-        )
+        new WallpaperVariant(R.raw.wallpaper_johanna1, "#fcf4e9")
     };
   }
 
@@ -63,15 +48,7 @@ public class JohannaWallpaper extends BaseWallpaper {
   @Override
   public WallpaperVariant[] getDarkVariants() {
     return new WallpaperVariant[]{
-        new WallpaperVariant(
-            R.raw.wallpaper_johanna1_dark,
-            "#32373a",
-            "#855642",
-            "#5f8393",
-            new String[]{"#754338", "#87a06d", "#a58b2c"},
-            false,
-            true
-        )
+        new WallpaperVariant(R.raw.wallpaper_johanna1_dark, "#32373a")
     };
   }
 }
