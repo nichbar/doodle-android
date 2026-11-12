@@ -1,8 +1,11 @@
+## 10.1.0
+
+- Improved: Removed legacy live wallpaper service and dynamic wallpaper settings
+
 ## 10.0.0
 
 - New: Static wallpaper edition - apply designs directly without background service
 - New: Automated build and release pipeline with GitHub Actions
-- Improved: Removed legacy live wallpaper service and dynamic wallpaper settings
 
 ## 6.0.1
 
